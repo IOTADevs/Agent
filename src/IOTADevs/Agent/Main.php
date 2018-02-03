@@ -28,14 +28,57 @@ declare(strict_types = 1);
 
 namespace IOTADevs\Agent;
 
+use CortexPE\utils\TextFormat;
 use IOTADevs\Agent\handler\PacketHandler;
+use IOTADevs\Agent\module\AgentModule;
+use IOTADevs\Agent\module\AntiAutoAim;
+use IOTADevs\Agent\module\AntiFly;
+use IOTADevs\Agent\module\AntiNoClip;
+use IOTADevs\Agent\task\AgentHeartbeat;
 use pocketmine\plugin\PluginBase;
 
 class Main extends PluginBase{
+	/** @var Main */
+	private static $instance;
+
+	/** @var AgentModule[] */
+	private $modules = [];
+
+	/** @var array */
+	public $configs = []; // yes this is an array. store the config values here...
+
+	/** @var int[] */
+	public $warnings = [];
 
 	public function onEnable(){
+		self::$instance = $this;
+
+		@mkdir($this->getDataFolder());
+		$this->saveDefaultConfig();
+		$this->configs = $this->getConfig()->getAll();
+
 		$pluginManager = $this->getServer()->getPluginManager();
 		$pluginManager->registerEvents(new EventListener($this), $this);
 		$pluginManager->registerEvents(new PacketHandler($this), $this);
+		$this->getServer()->getScheduler()->scheduleRepeatingTask(new AgentHeartbeat($this), 10);
+
+		$this->modules[] = new AntiFly();
+		$this->modules[] = new AntiNoClip();
+		//$this->modules[] = new AntiAutoAim();
+	}
+
+	public static function getInstance() : Main{
+		return self::$instance;
+	}
+
+	/**
+	 * @return AgentModule[]
+	 */
+	public function getModules() : array{
+		return $this->modules;
+	}
+
+	public static function getPrefix() : string {
+		return TextFormat::DARK_GRAY . "Agent" . TextFormat::WHITE . "> ";
 	}
 }

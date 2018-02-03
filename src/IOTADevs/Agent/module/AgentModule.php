@@ -26,25 +26,22 @@
 
 declare(strict_types = 1);
 
-namespace IOTADevs\Agent;
+namespace IOTADevs\Agent\module;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+use IOTADevs\Agent\Main;
+use pocketmine\Player;
 
-class EventListener implements Listener {
-	/** @var Main */
-	private $plugin;
+abstract class AgentModule {
+	public const MODULE_NAME = "";
 
-	public function __construct(Main $plugin){
-		$this->plugin = $plugin;
-	}
+	// todo: find out a wae to declare check method w/o exactly declaring the required arguments.
 
-	public function onJoin(PlayerJoinEvent $ev){
-		if(!isset($this->plugin->warnings[$ev->getPlayer()->getName()])){
-			$this->plugin->warnings[$ev->getPlayer()->getName()] = 0;
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm watching you...");
+	public function addWarning(Player $player) : int{
+		if(isset(Main::getInstance()->warnings[$player->getName()])){
+			Main::getInstance()->warnings[$player->getName()]++;
 		} else {
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm still watching you...");
+			Main::getInstance()->warnings[$player->getName()] = 1; // starting is 0...
 		}
+		return Main::getInstance()->warnings[$player->getName()];
 	}
 }

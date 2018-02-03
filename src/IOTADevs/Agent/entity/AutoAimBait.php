@@ -26,25 +26,10 @@
 
 declare(strict_types = 1);
 
-namespace IOTADevs\Agent;
+namespace IOTADevs\Agent\entity;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\entity\Human;
 
-class EventListener implements Listener {
-	/** @var Main */
-	private $plugin;
-
-	public function __construct(Main $plugin){
-		$this->plugin = $plugin;
-	}
-
-	public function onJoin(PlayerJoinEvent $ev){
-		if(!isset($this->plugin->warnings[$ev->getPlayer()->getName()])){
-			$this->plugin->warnings[$ev->getPlayer()->getName()] = 0;
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm watching you...");
-		} else {
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm still watching you...");
-		}
-	}
+class AutoAimBait extends Human {
+	// TODO
 }

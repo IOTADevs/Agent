@@ -26,25 +26,14 @@
 
 declare(strict_types = 1);
 
-namespace IOTADevs\Agent;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+namespace IOTADevs\Agent\task;
 
-class EventListener implements Listener {
-	/** @var Main */
-	private $plugin;
 
-	public function __construct(Main $plugin){
-		$this->plugin = $plugin;
-	}
+use pocketmine\scheduler\PluginTask;
 
-	public function onJoin(PlayerJoinEvent $ev){
-		if(!isset($this->plugin->warnings[$ev->getPlayer()->getName()])){
-			$this->plugin->warnings[$ev->getPlayer()->getName()] = 0;
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm watching you...");
-		} else {
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm still watching you...");
-		}
+class AgentHeartbeat extends PluginTask {
+	public function onRun(int $currentTick){
+		// TODO: Implement onRun() method.
 	}
 }

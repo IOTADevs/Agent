@@ -26,25 +26,13 @@
 
 declare(strict_types = 1);
 
-namespace IOTADevs\Agent;
+namespace IOTADevs\Agent\event;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\Event;
+use pocketmine\Server;
 
-class EventListener implements Listener {
-	/** @var Main */
-	private $plugin;
-
-	public function __construct(Main $plugin){
-		$this->plugin = $plugin;
-	}
-
-	public function onJoin(PlayerJoinEvent $ev){
-		if(!isset($this->plugin->warnings[$ev->getPlayer()->getName()])){
-			$this->plugin->warnings[$ev->getPlayer()->getName()] = 0;
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm watching you...");
-		} else {
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm still watching you...");
-		}
+class AgentEvent extends Event {
+	public function call(){
+		Server::getInstance()->getPluginManager()->callEvent($this);
 	}
 }

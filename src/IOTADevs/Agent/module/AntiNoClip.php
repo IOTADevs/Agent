@@ -26,25 +26,26 @@
 
 declare(strict_types = 1);
 
-namespace IOTADevs\Agent;
 
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+namespace IOTADevs\Agent\module;
 
-class EventListener implements Listener {
-	/** @var Main */
-	private $plugin;
+use IOTADevs\Agent\Main;
+use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
+use pocketmine\Player;
+use pocketmine\Server;
 
-	public function __construct(Main $plugin){
-		$this->plugin = $plugin;
-	}
+class AntiNoClip extends AgentModule {
+	public const MODULE_NAME = "AntiNoClip";
 
-	public function onJoin(PlayerJoinEvent $ev){
-		if(!isset($this->plugin->warnings[$ev->getPlayer()->getName()])){
-			$this->plugin->warnings[$ev->getPlayer()->getName()] = 0;
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm watching you...");
-		} else {
-			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm still watching you...");
+	public function check(Player $player, AdventureSettingsPacket $pk){
+		$config = Main::getInstance()->configs;
+		if ($pk->getFlag(AdventureSettingsPacket::NO_CLIP) && !$player->isSpectator()) {
+			Server::getInstance()->broadcastMessage(str_replace(["{player}"], [$player->getName()], $config["messages"]["no-clip"])); // this is an array so that its easily extensible
+			if($this->addWarning($player) < Main::getInstance()->configs["warningsBeforeKick"]){
+				$player->sendSettings();
+			} else {
+				$player->kick($config["kickMessages"]["no-clip"],false);
+			}
 		}
 	}
 }

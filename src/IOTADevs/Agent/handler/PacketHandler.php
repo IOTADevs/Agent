@@ -29,7 +29,12 @@ declare(strict_types = 1);
 namespace IOTADevs\Agent\handler;
 
 use IOTADevs\Agent\Main;
+use IOTADevs\Agent\module\AntiFly;
+use IOTADevs\Agent\module\AntiNoClip;
 use pocketmine\event\Listener;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
 
 class PacketHandler implements Listener {
 	/** @var Main */
@@ -37,5 +42,33 @@ class PacketHandler implements Listener {
 
 	public function __construct(Main $plugin){
 		$this->plugin = $plugin;
+	}
+
+	/**
+	 * @param DataPacketReceiveEvent $ev
+	 *
+	 * @priority LOWEST
+	 */
+	public function onNetworkReceive(DataPacketReceiveEvent $ev){
+		$p = $ev->getPlayer();
+		$pk = $ev->getPacket();
+		foreach(Main::getInstance()->getModules() as $module){
+			if($pk instanceof AdventureSettingsPacket){
+				if($module instanceof AntiFly || $module instanceof AntiNoClip){ // same checking arguments
+					$module->check($p, $pk);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param DataPacketSendEvent $ev
+	 *
+	 * @priority LOWEST
+	 */
+	public function onNetworkSend(DataPacketSendEvent $ev){
+		$p = $ev->getPlayer();
+		$pk = $ev->getPacket();
+		// todo
 	}
 }

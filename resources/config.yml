@@ -1,0 +1,25 @@
+# d8b  .d88888b. 88888888888     d8888 8888888b.
+# Y8P d88P" "Y88b    888        d88888 888  "Y88b
+#     888     888    888       d88P888 888    888
+# 888 888     888    888      d88P 888 888    888  .d88b.  888  888 .d8888b
+# 888 888     888    888     d88P  888 888    888 d8P  Y8b 888  888 88K
+# 888 888     888    888    d88P   888 888    888 88888888 Y88  88P "Y8888b.
+# 888 Y88b. .d88P    888   d8888888888 888  .d88P Y8b.      Y8bd8P       X88
+# 888  "Y88888P"     888  d88P     888 8888888P"   "Y8888    Y88P    88888P'
+#
+# Configuration File for the 'Agent' AntiCheat
+#
+# @author IOTADevs
+# @link https://github.com/IOTADevs/Agent
+#
+
+# Set to 1 for instant kick on hack detection
+warningsBeforeKick: 1
+
+messages:
+ fly: "{player} was caught Fly Hacking."
+ no-clip: "{player} was caught using No Clip."
+
+kickMessages:
+ fly: "Fly Hacking isn't allowed on this server"
+ no-clip: "No Clip isn't allowed on this server"
