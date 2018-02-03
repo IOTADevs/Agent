@@ -1,0 +1,7 @@
+name: Agent
+main: IOTADevs\Agent\Main
+version: 0.0.1
+api: 3.0.0-ALPHA10
+author: IOTADevs
+description: An AntiCheat with AI capabilities
+website: https://github.com/IOTADevs
