@@ -65,6 +65,7 @@ class Main extends PluginBase{
 		$this->modules[] = new AntiFly();
 		$this->modules[] = new AntiNoClip();
 		//$this->modules[] = new AntiAutoAim();
+		$this->modules[] = new AntiInstaBreak();
 	}
 
 	public static function getInstance() : Main{
