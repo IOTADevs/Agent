@@ -19,7 +19,15 @@ warningsBeforeKick: 1
 messages:
  fly: "{player} was caught Fly Hacking."
  no-clip: "{player} was caught using No Clip."
+ auto-aim: "{player} was caught using Auto Aim."
+ insta-break: "{player} was caught using InstaBreak."
 
 kickMessages:
  fly: "Fly Hacking isn't allowed on this server"
  no-clip: "No Clip isn't allowed on this server"
+ auto-aim: "Auto Aim isn't allowed on this server"
+ insta-break: "InstaBreak isn't allowed on this server"
+
+insta-break:
+ # The higher, the less effective it becomes. (ONLY MODIFY IF FALSE POSITIVES OCCUR)
+ decrementBreakTime: 1

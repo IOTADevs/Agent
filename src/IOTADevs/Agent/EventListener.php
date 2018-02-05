@@ -28,8 +28,15 @@ declare(strict_types = 1);
 
 namespace IOTADevs\Agent;
 
+use IOTADevs\Agent\entity\AutoAimBait;
+use IOTADevs\Agent\module\AntiInstaBreak;
+use pocketmine\entity\Entity;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 
 class EventListener implements Listener {
 	/** @var Main */
@@ -40,11 +47,39 @@ class EventListener implements Listener {
 	}
 
 	public function onJoin(PlayerJoinEvent $ev){
+		//file_put_contents($this->plugin->getDataFolder() . "skin" . $ev->getPlayer()->getName() . ".txt", base64_encode(serialize($ev->getPlayer()->namedtag->Skin)));
 		if(!isset($this->plugin->warnings[$ev->getPlayer()->getName()])){
 			$this->plugin->warnings[$ev->getPlayer()->getName()] = 0;
 			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm watching you...");
 		} else {
 			$ev->getPlayer()->sendMessage(Main::getPrefix() . "I'm still watching you...");
 		}
+		$baitNBT = Entity::createBaseNBT($ev->getPlayer()->asVector3()); // unreachable at first
+		$bait = $this->plugin->baits[$ev->getPlayer()->getName()] = new AutoAimBait($ev->getPlayer()->getLevel(), $baitNBT, $ev->getPlayer());
+		$bait->spawnTo($ev->getPlayer());
+	}
+
+	public function onQuit(PlayerQuitEvent $ev){
+		if(isset($this->plugin->baits[$ev->getPlayer()->getName()])){
+			$this->plugin->baits[$ev->getPlayer()->getName()]->close();
+			unset($this->plugin->baits[$ev->getPlayer()->getName()]);
+		}
+	}
+
+	public function onMove(PlayerMoveEvent $ev){
+		$player = $ev->getPlayer();
+		$entity = $this->plugin->baits[$player->getName()];
+
+		$entity->x = $player->x;
+		$entity->y = $player->y;
+		$entity->z = $player->z;
+	}
+
+	public function onBreak(BlockBreakEvent $ev){
+		Main::getModule(AntiInstaBreak::MODULE_NAME)->check([$ev]);
+	}
+
+	public function onTap(PlayerInteractEvent $ev){
+		Main::getModule(AntiInstaBreak::MODULE_NAME)->check([$ev]);
 	}
 }

@@ -29,64 +29,56 @@ declare(strict_types = 1);
 namespace IOTADevs\Agent\module;
 
 use IOTADevs\Agent\Main;
+use pocketmine\entity\Effect;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\entity\Effect;
+use pocketmine\Player;
 
-class AntiInstaBreak extends AgentModule implements Listener{
-	
+class AntiInstaBreak extends AgentModule {
+
 	public const MODULE_NAME = "AntiInstaBreak";
-	
-	private $breakYe = [];
 
-	public function onEnable(){
-		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-	}
+	/** @var array */
+	private $timeOfClick = [];
 
-	public function onPlayerInteract(PlayerInteractEvent $event){
-		if($event->getAction() === PlayerInteractEvent::LEFT_CLICK_BLOCK){
-			$this->breakYe[$event->getPlayer()->getRawUniqueId()] = floor(microtime(true) * 20);
-		}
-	}
-	public function onBlockBreak(BlockBreakEvent $event){
-		if(!$event->getInstaBreak()){
-			do{
-				$player = $event->getPlayer();
-				if(!isset($this->breakYe[$uuid = $event->getPlayer()->getRawUniqueId()])){
-					$event->setCancelled();
-					break;
-				}
+	public function check(array $factors){
+		$ev = $factors[0];
 
-				$item = $event->getItem();
-				$block = $event->getBlock();
+		if($ev instanceof PlayerInteractEvent){
+			if($ev->getAction() === PlayerInteractEvent::LEFT_CLICK_BLOCK){
+				$this->timeOfClick[$ev->getPlayer()->getName()] = floor(microtime(true) * 20);
+			}
+		}elseif($ev instanceof BlockBreakEvent){
+			if(!$ev->getInstaBreak()){
+				$player = $ev->getPlayer();
+				$item = $ev->getItem();
+				$block = $ev->getBlock();
 
-				$guessYe = ceil($block->getBreakTime($item) * 20);
+				$breakTime = ceil($block->getBreakTime($item) * 20);
 
 				if($player->hasEffect(Effect::HASTE)){
-					$guessYe *= 1 - (0.2 * $player->getEffect(Effect::HASTE)->getEffectLevel());
+					$breakTime *= 1 - (0.2 * $player->getEffect(Effect::HASTE)->getEffectLevel());
 				}
 
 				if($player->hasEffect(Effect::MINING_FATIGUE)){
-					$guessYe *= 1 + (0.3 * $player->getEffect(Effect::MINING_FATIGUE)->getEffectLevel());
+					$breakTime *= 1 + (0.3 * $player->getEffect(Effect::MINING_FATIGUE)->getEffectLevel());
 				}
 
-				$guessYe -= 1;
+				$diff = ceil(microtime(true) * 20) - $this->timeOfClick[$player->getName()];
 
-				$realYe = ceil(microtime(true) * 20) - $this->breakYe[$uuid = $player->getRawUniqueId()];
-
-				if($realYe < $guessYe){
-					$event->setCancelled();
-					break;
+				if($diff < ($breakTime - Main::getInstance()->configs[$this->getConfigEntry()]["decrementBreakTime"])){
+					$ev->setCancelled();
+					$this->hacking($player, $this);
 				}
-
-				unset($this->breakYe[$uuid]);
-			}while(false);
+			}
+		}else{
+			throw new ModuleException("Invalid Factors given");
 		}
 	}
 
-	public function onPlayerQuit(PlayerQuitEvent $event){
-		unset($this->breakYe[$event->getPlayer()->getRawUniqueId()]);
+	public function revertPlayer(Player $player){} // handled on check() method
+
+	public function getConfigEntry(): string{
+		return "insta-break";
 	}
 }

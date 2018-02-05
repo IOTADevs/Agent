@@ -29,11 +29,18 @@ declare(strict_types = 1);
 
 namespace IOTADevs\Agent\task;
 
-
+use IOTADevs\Agent\Main;
 use pocketmine\scheduler\PluginTask;
 
 class AgentHeartbeat extends PluginTask {
+	/** @var Main */
+	public $owner;
+
+	public function __construct(Main $owner){
+		parent::__construct($owner);
+	}
+
 	public function onRun(int $currentTick){
-		// TODO: Implement onRun() method.
+
 	}
 }

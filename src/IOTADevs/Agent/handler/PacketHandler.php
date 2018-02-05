@@ -55,7 +55,7 @@ class PacketHandler implements Listener {
 		foreach(Main::getInstance()->getModules() as $module){
 			if($pk instanceof AdventureSettingsPacket){
 				if($module instanceof AntiFly || $module instanceof AntiNoClip){ // same checking arguments
-					$module->check($p, $pk);
+					$module->check([$p, $pk]);
 				}
 			}
 		}
@@ -67,8 +67,8 @@ class PacketHandler implements Listener {
 	 * @priority LOWEST
 	 */
 	public function onNetworkSend(DataPacketSendEvent $ev){
-		$p = $ev->getPlayer();
-		$pk = $ev->getPacket();
-		// todo
+		//$p = $ev->getPlayer();
+		//$pk = $ev->getPacket();
+		// todo: find use for this?
 	}
 }

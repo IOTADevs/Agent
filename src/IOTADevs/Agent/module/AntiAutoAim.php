@@ -28,8 +28,26 @@ declare(strict_types = 1);
 
 namespace IOTADevs\Agent\module;
 
-class AntiAutoAim extends AgentModule {
-	public const MODULE_NAME = "AntiNoClip";
+use pocketmine\Player;
 
-	public function check(){} // todo
+class AntiAutoAim extends AgentModule {
+	public const MODULE_NAME = "AntiAutoAim";
+
+	public function check(array $factors){
+		$player = $factors[0];
+
+		if($player instanceof Player){
+			//todo
+		}else{
+			throw new ModuleException("Invalid Factors given");
+		}
+	}
+
+	public function revertPlayer(Player $player){
+
+	}
+
+	public function getConfigEntry(): string{
+		return "auto-aim";
+	}
 }

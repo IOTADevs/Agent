@@ -29,23 +29,30 @@ declare(strict_types = 1);
 
 namespace IOTADevs\Agent\module;
 
-use IOTADevs\Agent\Main;
 use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
 use pocketmine\Player;
-use pocketmine\Server;
 
 class AntiNoClip extends AgentModule {
 	public const MODULE_NAME = "AntiNoClip";
 
-	public function check(Player $player, AdventureSettingsPacket $pk){
-		$config = Main::getInstance()->configs;
-		if ($pk->getFlag(AdventureSettingsPacket::NO_CLIP) && !$player->isSpectator()) {
-			Server::getInstance()->broadcastMessage(str_replace(["{player}"], [$player->getName()], $config["messages"]["no-clip"])); // this is an array so that its easily extensible
-			if($this->addWarning($player) < Main::getInstance()->configs["warningsBeforeKick"]){
-				$player->sendSettings();
-			} else {
-				$player->kick($config["kickMessages"]["no-clip"],false);
+	public function check(array $factors){
+		$player = $factors[0];
+		$pk = $factors[1];
+
+		if($player instanceof Player && $pk instanceof AdventureSettingsPacket){
+			if(($pk->getFlag(AdventureSettingsPacket::ALLOW_FLIGHT) || $pk->getFlag(AdventureSettingsPacket::FLYING)) && !$player->getAllowFlight()){
+				$this->hacking($player, $this);
 			}
+		} else {
+			throw new ModuleException("Invalid Factors given");
 		}
+	}
+
+	public function revertPlayer(Player $player){
+		$player->sendSettings();
+	}
+
+	public function getConfigEntry(): string{
+		return "no-clip";
 	}
 }

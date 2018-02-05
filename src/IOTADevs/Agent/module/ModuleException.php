@@ -26,33 +26,9 @@
 
 declare(strict_types = 1);
 
-
 namespace IOTADevs\Agent\module;
 
-use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
-use pocketmine\Player;
 
-class AntiFly extends AgentModule {
-	public const MODULE_NAME = "AntiFly";
+class ModuleException extends \Exception {
 
-	public function check(array $factors){
-		$player = $factors[0];
-		$pk = $factors[1];
-
-		if($player instanceof Player && $pk instanceof AdventureSettingsPacket){
-			if(($pk->getFlag(AdventureSettingsPacket::ALLOW_FLIGHT) || $pk->getFlag(AdventureSettingsPacket::FLYING)) && !$player->getAllowFlight()){
-				$this->hacking($player, $this);
-			}
-		} else {
-			throw new ModuleException("Invalid Factors given");
-		}
-	}
-
-	public function revertPlayer(Player $player){
-		$player->sendSettings();
-	}
-
-	public function getConfigEntry(): string{
-		return "fly";
-	}
 }

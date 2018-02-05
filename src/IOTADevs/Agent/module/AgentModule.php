@@ -34,7 +34,16 @@ use pocketmine\Player;
 abstract class AgentModule {
 	public const MODULE_NAME = "";
 
-	// todo: find out a wae to declare check method w/o exactly declaring the required arguments.
+	abstract public function check(array $factors);
+
+	public function hacking(Player $player, AgentModule $module){
+		$this->broadcastHackingMessage($player, $module->getConfigEntry());
+		if($this->addWarning($player) < Main::getInstance()->configs["warningsBeforeKick"]){
+			$this->revertPlayer($player);
+		} else {
+			$this->kickPlayer($player, $module->getConfigEntry());
+		}
+	}
 
 	public function addWarning(Player $player) : int{
 		if(isset(Main::getInstance()->warnings[$player->getName()])){
@@ -44,4 +53,16 @@ abstract class AgentModule {
 		}
 		return Main::getInstance()->warnings[$player->getName()];
 	}
+
+	abstract public function revertPlayer(Player $player);
+
+	public function broadcastHackingMessage(Player $player, string $configEntryName) : string {
+		return Main::getPrefix() . str_replace(["{player}"], [$player->getName()], Main::getInstance()->configs["messages"][$configEntryName]);
+	}
+
+	public function kickPlayer(Player $player, string $configEntryName) : bool {
+		return $player->kick(Main::getInstance()->configs["kickMessages"][$configEntryName],false);
+	}
+
+	abstract public function getConfigEntry() : string;
 }

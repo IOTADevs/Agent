@@ -28,8 +28,49 @@ declare(strict_types = 1);
 
 namespace IOTADevs\Agent\entity;
 
+use IOTADevs\Agent\Main;
+use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\level\Level;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\Player;
+use pocketmine\utils\UUID;
 
 class AutoAimBait extends Human {
-	// TODO
+
+	/** @var Player */
+	private $player;
+
+	public function __construct(Level $level, CompoundTag $nbt, Player $player){
+		$nbt->Skin = clone Main::getSkin();
+		parent::__construct($level, $nbt);
+
+		$this->setNameTag("");
+		$this->uuid = UUID::fromRandom();
+
+		//$this->setGenericFlag(self::DATA_FLAG_INVISIBLE, true);
+		$this->setGenericFlag(self::DATA_FLAG_NO_AI, true);
+		$this->setGenericFlag(self::DATA_FLAG_AFFECTED_BY_GRAVITY, false);
+		$this->setNameTagVisible(false);
+		$this->setNameTagAlwaysVisible(false);
+		$this->setScale(0.1);
+		$this->player = $player;
+	}
+
+	public function getName(): string{
+		return "BAIT";
+	}
+
+	public function entityBaseTick(int $tickDiff = 1): bool{
+		return false;
+	}
+
+	public function attack(EntityDamageEvent $source){
+		return false;
+	}
+
+	public function knockBack(Entity $attacker, float $damage, float $x, float $z, float $base = 0.4){
+		return false;
+	}
 }
