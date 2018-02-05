@@ -35,6 +35,7 @@ use IOTADevs\Agent\handler\PacketHandler;
 use IOTADevs\Agent\module\AgentModule;
 use IOTADevs\Agent\module\AntiAutoAim;
 use IOTADevs\Agent\module\AntiFly;
+use IOTADevs\Agent\module\AntiInstaBreak;
 use IOTADevs\Agent\module\AntiNoClip;
 use IOTADevs\Agent\task\AgentHeartbeat;
 use pocketmine\entity\Entity;
@@ -75,6 +76,7 @@ class Main extends PluginBase{
 		$this->modules[] = new AntiFly();
 		$this->modules[] = new AntiNoClip();
 		$this->modules[] = new AntiAutoAim();
+		$this->modules[] = new AntiInstaBreak();
 
 		Entity::registerEntity(AutoAimBait::class, true);
 		Entity::registerEntity(Agent::class, true);
