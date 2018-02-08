@@ -73,6 +73,8 @@ class EventListener implements Listener {
 		$entity->x = $player->x;
 		$entity->y = $player->y;
 		$entity->z = $player->z;
+		
+		Main::getModule(AntiSpeed::MODULE_NAME)->check([$ev]);
 	}
 
 	public function onBreak(BlockBreakEvent $ev){
