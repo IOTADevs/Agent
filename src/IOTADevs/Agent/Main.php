@@ -77,6 +77,7 @@ class Main extends PluginBase{
 		$this->modules[] = new AntiNoClip();
 		$this->modules[] = new AntiAutoAim();
 		$this->modules[] = new AntiInstaBreak();
+		$this->modules[] = new AntiSpeed();
 
 		Entity::registerEntity(AutoAimBait::class, true);
 		Entity::registerEntity(Agent::class, true);
