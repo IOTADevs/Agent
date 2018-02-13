@@ -59,7 +59,6 @@ class AntiSpeed extends AgentModule implements Listener{
 	    }else{
 		        throw new ModuleException("Invalid Factors Given");
 	         }
-	    }
         }    
     public function revertPlayer(Player $player){}
     
