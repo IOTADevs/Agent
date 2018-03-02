@@ -53,8 +53,10 @@ class AntiSpeed extends AgentModule implements Listener{
 		        if($from->distance($to) > 5.1){
 				$ev->setCancelled();
 			}
-		    }elseif($from->distance($to) > 8.1){
+		    }else{
+			if($from->distance($to) > 8.1){
 				$ev->setCancelled();
+			
 	    }else{
 		        throw new ModuleException("Invalid Factors Given");
 	         }
