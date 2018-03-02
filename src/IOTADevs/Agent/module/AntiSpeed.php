@@ -50,10 +50,10 @@ class AntiSpeed extends AgentModule implements Listener{
 		    $to = $ev->getTo();
 		
 		    if(!$player->hasEffect(Effect::SPEED)){
-		        if($from->distance($to) > 1.4){
+		        if($from->distance($to) > 5.1){
 				$ev->setCancelled();
 			}
-		    }elseif($from->distance($to) > 2.1){
+		    }elseif($from->distance($to) > 8.1){
 				$ev->setCancelled();
 	    }else{
 		        throw new ModuleException("Invalid Factors Given");
